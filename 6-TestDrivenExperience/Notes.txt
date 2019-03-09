@@ -1,19 +1,21 @@
 ------------------------  
 PROJECT OVERVIEW 
 ------------------------  
-- We can use mongo with any backend 
-- We will use the ORM called Mongoose 
-    - which is the industry standard for using Node with Mongo 
-
+- The goal is to get total mastery of CRUD operations in MongoDB 
+- Application project:
+    - Set up Mongo database with a collection of users 
+    - Then we will use mocha to test that we are inserting records into the database. 
+- Project Structure: 
+    - src/
+        - Contains user.js 
+        - This file will contain code that maps mongoose and mongo together 
+    - test/ 
+        - Contains create.test.js, read.test.js, update.test.js, destroy.test.js 
+    
 
 ------------------------  
 THE TEST HELPER FILE 
 ------------------------  
-- Mongo allows us to have multiple internal instances of databases inside of a 
-  single Mongo process
-    - this allows us to work on multiple projects without having 
-      to dump our data into a backup file 
-    - Each database instance can then have multiple collections 
 
 
 ------------------------  
