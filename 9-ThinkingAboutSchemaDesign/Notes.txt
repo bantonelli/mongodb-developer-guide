@@ -1,0 +1,51 @@
+------------------------  
+CHALLENGES OF NESTED RESOURCES 
+------------------------  
+
+
+
+------------------------  
+EMBEDDED DOCUMENTS VS SEPARATE COLLECTIONS 
+------------------------  
+
+
+
+------------------------  
+BLOGPOSTS VS POSTS 
+------------------------ 
+
+
+
+------------------------  
+CREATING ASSOCIATIONS WITH REFS 
+------------------------ 
+
+
+
+------------------------  
+TEST SETUP FOR ASSOCIATIONS 
+------------------------ 
+
+
+
+------------------------  
+WIRING UP "HAS MANY" AND "HAS ONE" RELATIONSHIPS 
+------------------------
+
+
+
+------------------------  
+Promise.All FOR PARALLEL OPERATIONS 
+------------------------
+
+
+
+------------------------  
+POPULATING QUERIES 
+------------------------
+
+
+
+------------------------  
+LOADING DEEPLY NESTED ASSOCIATIONS 
+------------------------

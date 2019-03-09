@@ -1,0 +1,23 @@
+------------------------  
+WHERE DO WE USE MONGO?
+------------------------  
+- We can use mongo with any backend 
+- We will use the ORM called Mongoose 
+    - which is the industry standard for using Node with Mongo 
+
+
+------------------------  
+FUNDAMENTALS OF MONGODB 
+------------------------  
+- Mongo allows us to have multiple internal instances of databases inside of a 
+  single Mongo process
+    - this allows us to work on multiple projects without having 
+      to dump our data into a backup file 
+    - Each database instance can then have multiple collections 
+- Each collection represents a different type of resource/model 
+
+
+------------------------  
+A LAST TOUCH OF SETUP 
+------------------------ 
+- The first set of operations we will learn in Mongoose/Mongo: CRUD 

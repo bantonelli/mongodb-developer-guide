@@ -1,0 +1,132 @@
+------------------------  
+PROJECT OVERVIEW 
+------------------------  
+- We can use mongo with any backend 
+- We will use the ORM called Mongoose 
+    - which is the industry standard for using Node with Mongo 
+
+
+------------------------  
+THE TEST HELPER FILE 
+------------------------  
+- Mongo allows us to have multiple internal instances of databases inside of a 
+  single Mongo process
+    - this allows us to work on multiple projects without having 
+      to dump our data into a backup file 
+    - Each database instance can then have multiple collections 
+
+
+------------------------  
+MONGOOSE CONNECTION HELPER 
+------------------------ 
+
+
+
+------------------------  
+MONGOOSE MODELS  
+------------------------ 
+
+
+------------------------  
+MORE ON MODELS 
+------------------------ 
+
+
+------------------------  
+THE BASICS OF MOCHA  
+------------------------ 
+
+
+------------------------  
+RUNNING MOCHA TESTS  
+------------------------ 
+
+
+------------------------  
+CREATING MODEL INSTANCES  
+------------------------ 
+
+
+------------------------  
+SAVING USERS TO MONGO 
+------------------------
+
+
+------------------------  
+DROPPING COLLECTIONS 
+------------------------ 
+
+
+------------------------  
+MOCHA'S DONE CALLBACK 
+------------------------ 
+
+
+------------------------  
+MONGOOSE'S isNew PROPERTY
+------------------------ 
+
+
+------------------------  
+DEFAULT PROMISE IMPLEMENTATION  
+------------------------ 
+
+
+------------------------  
+TEST SETUP FOR FINDING USERS 
+------------------------ 
+
+
+------------------------  
+MAKING MONGO QUERIES 
+------------------------ 
+
+
+------------------------  
+THE ID PROPERTY - A BIG GOTCHA
+------------------------ 
+
+
+------------------------  
+AUTOMATING TESTS WITH NODEMON 
+------------------------ 
+
+
+------------------------  
+FINDING PARTICULAR RECORDS 
+------------------------ 
+
+
+------------------------  
+THE MANY WAYS TO REMOVE RECORDS 
+------------------------ 
+
+
+------------------------  
+CLASS BASED REMOVES 
+------------------------ 
+
+
+------------------------  
+MORE CLASS BASED REMOVALS 
+------------------------ 
+
+
+------------------------  
+THE MANY WAYS TO UPDATE RECORDS 
+------------------------ 
+
+
+------------------------  
+SET AND SAVE FOR UPDATING RECORDS 
+------------------------ 
+
+
+------------------------  
+MODEL INSTANCE UPDATES  
+------------------------
+
+
+------------------------  
+CLASS BASED UPDATES 
+------------------------ 
