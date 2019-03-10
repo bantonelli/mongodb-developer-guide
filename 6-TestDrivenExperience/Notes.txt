@@ -16,77 +16,220 @@ PROJECT OVERVIEW
 ------------------------  
 THE TEST HELPER FILE 
 ------------------------  
+- Mongoose library to modify library 
+- Use mocha tests framework to test CRUD operations 
+- Set up test_helper.js file 
+    - Initiate a connection from mongoose to Mongo 
+        - This takes some amount of time, so we have to wait 
+    - If connection successful run tests 
+    - If not successful show error 
 
 
 ------------------------  
 MONGOOSE CONNECTION HELPER 
 ------------------------ 
-
+- mongoose.connect(<url>/<database>)
+    - This is the command that is used to connect to a mongodb server 
+    - this can connect to ANY mongo server (not just the local one)
+    - <url> is a string for the mongo server you wish to connect to. 
+    - <database> is the database on the server you wish to work with. 
+        - If database doesn't already exists mongo will create it for you. 
+- After starting a connect call it may take different lengths of time
+  to make the connection 
+    - mongoose.connection.once('open', fn)
+        - Run the event handler for 'connection open' event one time. 
+    - mongoose.connection.on('error', fn);
+        - Run the event handler for 'connection error' event whenever it happens. 
 
 
 ------------------------  
 MONGOOSE MODELS  
 ------------------------ 
+- Now we are going to use mongoose to create a new collection in our database 
+- We will create a new users collection 
+    - Need models to create a collection 
+    - We use mongoose to create models 
+
+USER MODEL: 
+    - The models represents the entire collection of users 
+    - It is also used to create records/instances in the collection
+    - RECORDS:
+        - Represent single instances in the database 
+    - Models require a 'SCHEMA' to determine the properties 
+      of each record in the collection. 
 
 
 ------------------------  
 MORE ON MODELS 
 ------------------------ 
+user.js: 
+    - require mongoose 
+    - require mongoose.Schema 
+    - Instantiate a Schema for user record 
+    - Use User Schema in constructor for User Model. 
+
+mongoose.model(<nameOfCollection>, <schema>):
+    - mongoose checks in with MongoDB to see if <nameOfCollection> already exists
+    - The second argument is the Schema we expect the collection to follow 
 
 
 ------------------------  
 THE BASICS OF MOCHA  
 ------------------------ 
+- Structure of Mocha tests:
+    - Describe block can contain: 
+        - Other describe blocks 
+        - It blocks can contain: 
+            - Actual unit code 
+            - assertion
+
+- The 'describe' function and the 'it' function are provided by mocha. 
+
+DESCRIBE:
+    - These blocks are only to help us see which tests are failing 
+    - Literally we are just describing the test
+
+IT: 
+    - These blocks are meant to explain what the function is supposed to do. 
+    - These are the most important mocha construct.
+    - These blocks contain assertions. 
+        - Assertions are the things that evaluate if the functions being tested 
+          are returning the proper values. 
 
 
 ------------------------  
 RUNNING MOCHA TESTS  
 ------------------------ 
+- Set up test script in package.json 
+- "test": "nodemon --exec mocha test/**/*.test.js || exit 1"
+- "alttest": "mocha"
+- in command line: npm run test
+- MUST RUN CONNECTION TO DATABASE IN SAME THREAD AS MODEL CREATION
+    - Basically connection to db has to run in same process 
+      as any mongoose operations
 
 
 ------------------------  
 CREATING MODEL INSTANCES  
 ------------------------ 
+- Create a new user 
+- EXAMPLE: 
+    const joe = new User({name: 'Joe'});
+- User is basically like a class 
+- joe is basically an instance of User 
+- After instantiating the model it is not yet saved to the 
+  database until we explicitly save it. 
 
 
 ------------------------  
 SAVING USERS TO MONGO 
 ------------------------
+- Everytime you call save it will create a new record 
+- Meaning every time your test runs you will add new records 
+- You have to call .save() on the record instance 
 
 
 ------------------------  
 DROPPING COLLECTIONS 
 ------------------------ 
+- Before you run a test you need to drop all of the records 
+- This way you won't run into duplicate record errors 
+- Use beforeEach() mocha hook to drop collections relevant to 
+  the test suite we are working with. 
+    - Use: mongoose.connection.collections.users.drop(); 
+    - Since the connection is takes time to drop records we should 
+      make an async solution
 
 
 ------------------------  
 MOCHA'S DONE CALLBACK 
 ------------------------ 
+- Making any type of operation on our DB takes some amount of 
+  time to complete. 
+    - Because of this things won't necessarily happen in the order 
+      we expect. 
+    - To pause or wait for a process to complete use the 'done()' 
+      callback. 
+
+******** ASIDE: IMPORTANT *********
+- You should wrap the mongoose connection operation in a 
+    before call (supplied by mocha library)
+- before() only executes one time (instead of before each describe).
 
 
 ------------------------  
 MONGOOSE'S isNew PROPERTY
 ------------------------ 
+- We are now ready to make an assertion to make sure that 
+  the new record is actually saved. 
+- Use the Promise returned from record.save() to 
+  see if the assertion is true. 
+    - EXAMPLE: 
+        joe.save().then(() => {
+            // test assertion here
+        });
+
+- The assertion we want to test: isNew 
+    - After the record is saved to DB Mongo will set the 
+      record's isNew property to false. 
+    - So before save: isNew == true 
+    - After Save: isNew == false 
 
 
 ------------------------  
 DEFAULT PROMISE IMPLEMENTATION  
 ------------------------ 
+- By default when we use Mongoose it has a default Promise lib 
+    - However, this implementation is deprecated (mpromise package)
+    - So we should plug in our own promise library. 
+        - EXAMPLE LIBS: bluebird, q, ES6 Promises 
+    - Set ES6 Promise library: 
+        mongoose.Promise = global.Promise
 
 
 ------------------------  
 TEST SETUP FOR FINDING USERS 
 ------------------------ 
+- You can set up beforeEach() blocks within describe() 
+    - This makes the beforeEach() only apply to it() calls 
+      within the current describe().
+- In the beforeEach we are going to create a record 
+  and save it to the DB to work with. 
 
 
 ------------------------  
 MAKING MONGO QUERIES 
 ------------------------ 
+- <Model>.find(<criteria>)
+    - Find ALL records with the given criteria
+        - returns a an array of records 
+    - <criteria> 
 
+- <Model>.findOne(<criteria>)
+    - Find the FIRST RECORD with the given criteria
+        - returns a single record 
+
+EXAMPLE: 
+    User.find({name: 'Joe'}).then((usersArray) => {
+        // logic 
+        done(); 
+    });
 
 ------------------------  
 THE ID PROPERTY - A BIG GOTCHA
 ------------------------ 
+- Even when a record isNew it still is given an _id 
+    - Mongoose creates a unique ID BEFORE it is saved 
+      to the database. 
+- When we look at the _id property, we are actually looking
+  at an ObjectID, not the raw string. 
+    - Therefore we cannot perform string equivalence checks 
+      on the _id property 
+    - We have to first wrap it in an ObjectID() call. 
+    - To get the raw string _id we have to call .toString()
+    EXAMPLE: users[0]._id.toString(); 
+
+- TLDR: call .toString(); to do comparisons on _id. 
 
 
 ------------------------  
