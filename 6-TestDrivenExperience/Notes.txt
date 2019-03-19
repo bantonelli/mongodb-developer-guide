@@ -41,6 +41,12 @@ MONGOOSE CONNECTION HELPER
     - mongoose.connection.on('error', fn);
         - Run the event handler for 'connection error' event whenever it happens. 
 
+- COMMON THINGS TO USE THE CONNECTION FOR:
+    - Accessing collections: mongoose.connection.collections
+    - Handling events: mongoose.connection.on(<eventName>, <cb>)
+        - Alternatively: mongoose.connection.once(<eventName>, <cb>)
+    - Accessing connection information 
+
 
 ------------------------  
 MONGOOSE MODELS  
@@ -136,7 +142,7 @@ DROPPING COLLECTIONS
 - This way you won't run into duplicate record errors 
 - Use beforeEach() mocha hook to drop collections relevant to 
   the test suite we are working with. 
-    - Use: mongoose.connection.collections.users.drop(); 
+    - Use: mongoose.connection.collections.users.drop(<callback>); 
     - Since the connection is takes time to drop records we should 
       make an async solution
 
@@ -172,8 +178,8 @@ MONGOOSE'S isNew PROPERTY
 - The assertion we want to test: isNew 
     - After the record is saved to DB Mongo will set the 
       record's isNew property to false. 
-    - So before save: isNew == true 
-    - After Save: isNew == false 
+        - So before save: isNew == true 
+        - After Save: isNew == false 
 
 
 ------------------------  
@@ -202,7 +208,7 @@ MAKING MONGO QUERIES
 ------------------------ 
 - <Model>.find(<criteria>)
     - Find ALL records with the given criteria
-        - returns a an array of records 
+        - returns an array of records 
     - <criteria> 
 
 - <Model>.findOne(<criteria>)
@@ -214,6 +220,7 @@ EXAMPLE:
         // logic 
         done(); 
     });
+
 
 ------------------------  
 THE ID PROPERTY - A BIG GOTCHA
@@ -235,43 +242,152 @@ THE ID PROPERTY - A BIG GOTCHA
 ------------------------  
 AUTOMATING TESTS WITH NODEMON 
 ------------------------ 
+- Use nodemon to run tests instead of mocha --watch 
+    - mocha --watch: 
+        - This shouldn't be used because it keeps the 
+          mocha process running which may cause issues with 
+          Mongo dropping/adding collections properly.
+
+- TEST SCRIPT COMMAND: "nodemon --exec 'mocha -R min'"
+    - mocha -R min 
+        - User "-R min" to condense down any test output 
 
 
 ------------------------  
 FINDING PARTICULAR RECORDS 
 ------------------------ 
+- How do you find a user by their ObjectID?
+EXAMPLE: 
+// No need to use .toString() because we want to keep it as an ObjectID
+User.findOne({_id: joe._id}).then((user) => {
+    console.log(user);
+});
 
 
 ------------------------  
 THE MANY WAYS TO REMOVE RECORDS 
 ------------------------ 
+- There are many different ways to acheive the same thing. 
+- Mongoose uses the terminology 'remove' instead of 'delete'
+- When mongoose removes a record: 
+    - After the record is removed, if you then search for that 
+      record it should return null. 
+    - Basically if you query for a record that doesn't exist 
+      mongoose will return 'null'. 
+
+REMOVE METHODS: Model Class 
+- .remove() 
+    - USE CASE: If we want to delete all records in a collection with a 
+      generic criteria (like removing all users who are inactive)
+- .findOneAndRemove() 
+- .findByIdAndRemove() 
+
+
+REMOVE METHODS: Model Instance 
+- .remove 
+    - When we call remove it will delete the instance record 
+      from the database. (similar to record.save())
+    - USE CASE: Most useful when we have a record available to us 
+      make use of this method. 
 
 
 ------------------------  
 CLASS BASED REMOVES 
 ------------------------ 
+- PERFORMING DB OPERATIONS IN A PARTICULAR SEQUENCE: 
+    1) Peform the initial lookup 
+    2) Handle lookup promise with .then() on outside 
+    3) Put another lookup inside then call 
+    4) Return the Nested lookup promise 
+    5) Handle the nested promise with a .then() call on the outside 
+
+
+    - EXAMPLE: 
+        joe.remove()
+        .then(function () {
+            return User.findOne({_id: joe._id});            
+        })
+        .then((result) => {
+            assert(result === null);
+            done();
+        });
+
+- Class based remove Example:
+    User.remove(<criteriaObject>);
 
 
 ------------------------  
 MORE CLASS BASED REMOVALS 
 ------------------------ 
+- Basically you can acheive the same result as record.remove() 
+  by using either findOneAndRemove() or findByIdAndRemove() on the class 
 
 
 ------------------------  
 THE MANY WAYS TO UPDATE RECORDS 
 ------------------------ 
+- Updating records is usually when you run into issues with MongoDB 
+- Like Deleting records, updating them has both Class AND Instance methods 
+
+CLASS METHODS: 
+    - update() 
+    - findOneAndUpdate()
+    - findByIdAndUpdate() 
+
+INSTANCE METHODS: 
+    - update() 
+    - set() & save() 
 
 
 ------------------------  
 SET AND SAVE FOR UPDATING RECORDS 
 ------------------------ 
+- Inside of mongoose if we ever want to update a instance 
+    - we can use recordInstance.set(<propertyToUpdate>, <newValue>) 
+- Changes made by set() are only to the object instance 
+    - They are only in memory NOT persisted until we call save() 
+    - To persist changes you have to call instance.save()
 
 
 ------------------------  
 MODEL INSTANCE UPDATES  
 ------------------------
+- You can directly update an instance in the database 
+  by calling .update() on it.
+    - This method is like .save() where its a database operation
+    - Therefore you need to handle the promise it returns. 
+- As of now .update() is deprecated, use these instead: 
+    - updateOne(), updateMany(), or bulkWrite() 
+
+*** WRAP UP *** 
+- Use .set and .save when you have incremental variable 
+  updates on a single object over time. 
+- Use .update() when you have a bulk update to perform 
+  all at once. 
+- Behind the scenes both methods are virtually the 
+  same in terms of performance. 
 
 
 ------------------------  
 CLASS BASED UPDATES 
 ------------------------ 
+- We're now going to move onto Class-based updates 
+- These class methods work similar to Model.remove(<criteria>).
+
+EXAMPLE Model.update(): 
+    - Update all records that meet the criteria 
+        - Good for updating generic properties like 
+          .active, .subscribed, etc. 
+    // Find all objects with name property set to Joe
+    // And for every record that meets criteria 
+    // Set .name to 'Alex'
+    User.update({ name: 'Joe' }, { name: 'Alex' }).then(...);
+
+EXAMPLE Model.findOneAndUpdate():
+    - Update a single record by passing in a unique attribute 
+        - Good for updating email, userId, etc. 
+    User.findOneAndUpdate(<criteria>, <updateObject>);
+
+EXAMPLE Model.findByIdAndUpdate():
+    - Update a record with the given ObjectID 
+    User.findByIdAndUpdate(<ObjectID>, <updateObject>);

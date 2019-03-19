@@ -19,7 +19,16 @@ describe('Reading users out of the database', function () {
             // console.log("JOE ID: ", joe._id);
             console.log(usersArray);
             assert(usersArray[0]._id.toString() === joe._id.toString());
-            done(); 
+            done();
         });
     });
+
+    it("should find a user with a particular id", function (done) {
+        User.findOne({_id: joe._id}).then((user) => {
+            console.log('USER: ', user);
+            assert(user.name === joe.name);
+            done();            
+        });
+    });
+
 });
