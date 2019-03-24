@@ -1,34 +1,125 @@
 ------------------------  
 UPDATE OPERATORS 
 ------------------------  
+- Now that we have covered CRUD operations we are going to 
+  move towards learning about performance in MongoDB.
+
+PROBLEM: 
+- We want to increment a Number property on many users. 
+- POSSIBLE APPROACH: 
+    - Find users then update the value on the server 
+    - Then Save the record back. 
+
+- The above approach isn't suitable because we want to do 
+  update WITHOUT loading up data onto the server.
+    - Avoid loading data onto the server whenever possible for 
+      added performance.
+
+SOLUTION: 
+- Use the server code to send instructions to the database  
+- The database will follow the instructions to perform the 
+  desired update. (Basically let MongoDB do the work for the server)
+- To acheive this use MongoDB's update operators 
+    - You can use these operators with Class-based update methods. 
+    - These are all extremely performant. 
+    - The operator that we need is called $inc, but you can 
+      do many other updates via operators (ie: $set, $rename, etc).
+    - The operators are really useful when updating large amounts 
+      of records at once. 
 
 
 
 ------------------------  
 THE INCREMENT UPDATE OPERATOR 
-------------------------  
+------------------------ 
+- Operator syntax: 
+    {<operator>: {<property>: <updateValue>}}
+- The increment operator can update properties that are numerical
+- The <updateValue> can be positive OR negative 
+    - This is why there isn't a need for a $dec operator
 
+EXAMPLE: 
+    User.update({ name: 'Joe' }, { $inc: { postCount: 1 } }).then(...);
 
 
 ------------------------  
 VALIDATION OF RECORDS 
 ------------------------ 
-
+- Mongoose adds support for validation of records in MongoDB 
+- So far we haven't absolutely needed mongoose or used any 
+  mongoose-specific features 
+    - we could do CRUD just as easily right inside MongoDB
+- Basically validation of records is checking that field values 
+  fit some specific criteria. 
 
 
 ------------------------  
 REQUIRING ATTRIBUTES ON A MODEL 
 ------------------------ 
+- As a first attempt at validation we will add a 'required'
+  model attribute and test that it works. 
+- TIP: 
+    - Validation error messages should be user-friendly 
+    - The message should be able to propogate to the 
+      front-end if needed. 
 
+.validateSync():
+    - Returns a "validation result" object 
+    - Validation result object will have all errors (if any)
+    - Access errors via the "errors" property 
+EXAMPLE: 
+// Log the error message for name prop specified in Model
+    const validationResult = user.validateSync();
+    console.log(validationResult.errors.name.message);
 
+.validateSync() vs .validate(): -> synchronous vs asynch 
+    - validate() doesn't return a validation result 
+    - Instead it sends result to callback 
 
 ------------------------  
 VALIDATION WITH A VALIDATOR FUNCTION 
 ------------------------ 
-
+- To add a function to validate a model attribute: 
+    1) add validate property to attribute 
+        - 'validate' property has 2 of its own properties
+            - validator: function 
+            - message: String 
+    2) Define the validator function 
+        - validator: function (<modelAttribute>) {...}
+        - This function should return falsey whenever 
+          model attribute doesn't meet requirements
+        - Upon returning false, the 'message' will 
+          be used in the validationResult object. 
+EXAMPLE:
+    name: {
+        type: String,
+        required: [true, 'Name is required.'],
+        validate: {
+            validator: (name) => {
+                if (name.length > 2) {
+                    return true;
+                } else {
+                    return false;
+                } 
+            },
+            message: "Name must be longer than 2 characters."
+        } 
+    },
 
 
 ------------------------  
 HANDLING FAILED INSERTS 
 ------------------------
+- When record.save() fails due to invalid fields it 
+  will return a validationResult object in the promise
+    - This is the same type of object returned by 
+      record.validateSync()
+- To access this validation result you have to use a 
+  .catch() handler. 
 
+EXAMPLE: 
+    user.save()
+    .catch((validationResult) => {
+        const {message} = validationResult.errors.name;
+        assert(messsage === 'Some error message');
+    });
