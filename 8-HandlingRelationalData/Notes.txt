@@ -6,45 +6,128 @@ EMBEDDING RESOURCES IN MODELS
 
 ------------------------  
 NESTING POSTS ON USERS 
-------------------------  
+------------------------ 
+- To create a subdocument: 
+    - First create a separate schema
+    - Then set that schema as the value of another schema's 
+      property. 
+      // posts property is an array of PostSchemas 
+        EXAMPLE: posts: [PostSchema]
+    - Add validation
+        - You can even add validation to these type of fields. 
 
 
 
 ------------------------  
 TESTING SUBDOCUMENTS 
 ------------------------ 
+- Same basic setup of suite 
+- Create a user with a nested post 
+- Save the record to db 
+- Pull the user and see that nested object 
+
+CREATING USER WITH NESTED POST: 
+    - Instantiate as normal 
+    - for the posts property 
+        - use an array of objects that resemble the structure 
+          of the post schema 
+        - Mongo will automatically try to apply the PostSchema 
+          to the inner object(s)..
+    EXAMPLE: 
+        const user = new User({
+            name: "Brandon",
+            posts: [
+                {title: "Some Post Title"}
+            ]
+        });
 
 
 
 ------------------------  
 ADDING SUBDOCUMENTS TO EXISTING RECORDS 
 ------------------------ 
+PROBLEM: How do you take an existing user and add a new subdocument?
+1) Create instance of Joe 
+2) Save Joe 
+3) Fetch Joe 
+4) Add post to Joe 
+    - To add a new post simply use the following approach: 
+        posts.push({title: "New Post"});
+5) Save Joe 
+6) Fetch Joe 
+7) Make assertion 
 
+**** ASIDE **** 
+- You can only save subdocuments inside a parent, by adding the subdocument record and then saving the parent record.
+- Basically subdocuments get saved when the parent does. 
 
 
 ------------------------  
 REMOVING SUBDOCUMENTS
 ------------------------ 
+PROBLEM: How do we remove an already existing post? 
+1) Create instance of Joe 
+2) Save Joe 
+3) Fetch Joe 
+4) Add post to Joe 
+    - Unlike adding a new record with .push(), Mongoose has 
+      a utility for removing a subdocument from an array. 
+    - API: record.posts[0].remove();
+        - Basically the same as:
+            const post = record.posts[0];
+            post.remove(); // like record.remove() or record.save() 
+5) Save Joe 
+6) Fetch Joe 
+7) Make assertion 
 
+**** ASIDE **** 
+- calling .remove() on a subdocument doesn't automatically save the  record back to the database. 
+    - this is unlike .remove() on a normal record 
+    - It also doesn't return a promise so it won't continue the promise chain. 
 
 
 ------------------------  
 VIRTUAL TYPES 
 ------------------------
-
+- A virtual type is any field on a model that does NOT 
+  get persisted to the Database. 
+    - Instead it gets computed on the server using the 
+      values of persisted properties.
+    - It is a derivative or the result of some other properties
 
 
 ------------------------  
 DEFINING A VIRTUAL TYPE 
 ------------------------
+- Any virtuals should NOT be defined on the Schema 
+    - This is because it is computed "on the fly" 
+
+**** ASIDE: PENDING TESTS **** 
+- Put an 'x' in front of the 'it' block to declare it as pending 
+- Mocha will not fail those types of tests (they'll show up as
+  blue colored).
+    EXAMPLE: xit("should...", () => {...})
 
 
 
 ------------------------  
 ES6 GETTERS 
 ------------------------
+- When we access a virtual we basically do the following:
+    - Trigger a function call 
+    - Take the return value of that function call and return that
+- If we return 'this' from within the getter definition 
+    - we get the same properties that exist on the user object 
+      on the server. 
+    - therefore we can access our persisted properties to compute 
+      our virtual value simply by saying this.<someOtherProperty)
 
+    EXAMPLE: 
+        UserSchema.virtual('someVirtual').get(function () {
+            return this.name + ' is virtual! woot!';
+        });
 
+- We are using the 'function' keyword instead of arrow function 
 
 ------------------------  
 FIXING UPDATE TESTS 

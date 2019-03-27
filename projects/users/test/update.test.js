@@ -45,7 +45,7 @@ describe('Updating records', function () {
         assertName(User.findByIdAndUpdate(joe._id, { name: 'Alex'}), done);
     });
 
-    it('A user can have their postCount property incremented by 1', (done) => {
+    xit('A user can have their postCount property incremented by 1', (done) => {
         User.update({ name: 'Joe' }, { $inc: {postCount: 1} })
         .then(() => {
             return User.findOne({ name: 'Joe' });
