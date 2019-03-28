@@ -1,18 +1,41 @@
 ------------------------  
 EMBEDDING RESOURCES IN MODELS 
 ------------------------  
+- Applications usually have multiple separate resources 
+- In our project we are going to add posts to the 
+  user Model (as an embedded resource).
 
+HOW SHOULD WE ADD IN POSTS?: 
+- Option 1 - Add another mongoose model 
+    - This strategy makes a lot of sense in a SQL 
+      database, but not so much in Mongo 
+- Option 2 - Embed a Post object array inside of the 
+  User model. 
+    - This approach works especially well since there 
+      is only 1 user to a given post. 
+    - A nested resource can have a Schema without 
+      necessarily having a model or collection of its own.
+
+APPROACH / SOLUTION:
+- User Schema: 
+    - name: String
+    - postCount: virtual 
+    - posts: [Post]
+- Post Schema: 
+    - title: String 
 
 
 ------------------------  
 NESTING POSTS ON USERS 
 ------------------------  
-
+SUBDOCUMENTS: (In Mongo)
+- The idea of embedding a resource inside of another 
 
 
 ------------------------  
 TESTING SUBDOCUMENTS 
------------------------- 
+------------------------
+ 
 
 
 
