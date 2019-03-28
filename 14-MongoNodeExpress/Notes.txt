@@ -1,17 +1,17 @@
 ------------------------  
-CHALLENGES OF NESTED RESOURCES 
+CLEANING UP WITH MIDDLEWARE  
 ------------------------  
 
 
 
 ------------------------  
-EMBEDDED DOCUMENTS VS SEPARATE COLLECTIONS 
+DEALING WITH CYCLIC REQUIRES 
 ------------------------  
 
 
 
 ------------------------  
-BLOGPOSTS VS POSTS 
+PRE-REMOVE MIDDLEWARE 
 ------------------------ 
 - In our app we are going to have both Posts AND BlogPosts
     - posts --> Points to PostSchema 
@@ -20,7 +20,7 @@ BLOGPOSTS VS POSTS
 
 
 ------------------------  
-CREATING ASSOCIATIONS WITH REFS 
+TESTING PRE-REMOVE MIDDLEWARE 
 ------------------------ 
 HOW DO WE REFERENCE ONE TYPE OF MODEL TO ANOTHER?
 
