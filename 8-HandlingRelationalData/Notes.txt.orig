@@ -27,6 +27,14 @@ APPROACH / SOLUTION:
 
 ------------------------  
 NESTING POSTS ON USERS 
+<<<<<<< HEAD
+------------------------  
+SUBDOCUMENTS: (In Mongo)
+- The idea of embedding a resource inside of another 
+||||||| merged common ancestors
+------------------------  
+
+=======
 ------------------------ 
 - To create a subdocument: 
     - First create a separate schema
@@ -37,11 +45,17 @@ NESTING POSTS ON USERS
     - Add validation
         - You can even add validation to these type of fields. 
 
-SUBDOCUMENTS: (In Mongo)
-- The idea of embedding a resource inside of another 
+>>>>>>> 392872a2003b24cfa941ebe9dd8ba2cba21a1eee
+
 
 ------------------------  
 TESTING SUBDOCUMENTS 
+<<<<<<< HEAD
+------------------------
+ 
+||||||| merged common ancestors
+------------------------ 
+=======
 ------------------------ 
 - Same basic setup of suite 
 - Create a user with a nested post 
@@ -62,6 +76,7 @@ CREATING USER WITH NESTED POST:
                 {title: "Some Post Title"}
             ]
         });
+>>>>>>> 392872a2003b24cfa941ebe9dd8ba2cba21a1eee
 
 
 
