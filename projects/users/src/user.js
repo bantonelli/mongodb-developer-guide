@@ -19,18 +19,20 @@ const UserSchema = new Schema({
             message: "Name must be longer than 2 characters."
         } 
     },
-    posts: [PostSchema] 
+    posts: [PostSchema],
+    likes: Number 
 });  
 
 // Tell our User Schema to set up a virtual field 
 UserSchema.virtual('postCount').get(function (){
     /*
     We are using the 'function' keyword instead of arrow function 
-    
+    so the 'this' keyword points to the UserSchema object 
     .get():
         - This is basically an ES6 getter 
         - So we can define a functional/computed value for the virtual. 
     */
+    return this.posts.length;
 });
 
 const User = mongoose.model('user', UserSchema);

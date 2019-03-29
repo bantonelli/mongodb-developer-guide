@@ -1,13 +1,30 @@
 ------------------------  
 CHALLENGES OF NESTED RESOURCES 
 ------------------------  
-
+- Some of the challenges are mostly due to the complexity of 
+  queries that have bulk results. 
+- It gets even more complicated when you involve multiple users 
+- The database design should be in line with the targeted UI 
+  representation. 
 
 
 ------------------------  
 EMBEDDED DOCUMENTS VS SEPARATE COLLECTIONS 
 ------------------------  
+- Its usually better to set up separate collections when you 
+  have a bunch of separate (but related) objects. 
+- If you have any previous experience with SQL you may be tempted 
+  to just set up relations for everything, but there are drawbacks.
 
+DRAWBACKS OF SEPARATE COLLECTION APPROACH (IN MONGO):
+    1) MongoDB doesn't have single-operation 'joins'
+        - In a realtime SQL database you can (in one query) do: 
+            a) get a user 
+            b) give me all related posts to that user 
+            c) give me all the related comments to that post 
+        - Mongo would have to run a separate query on each of these 
+          related collections. This is a lot less performant. 
+        
 
 
 ------------------------  
