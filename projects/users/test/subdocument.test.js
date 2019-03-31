@@ -61,4 +61,39 @@ describe('Subdocuments', () => {
             done();
         });
     });
+
+    it('Chris should shit', function(done) {
+        const chris = new User({
+            name: 'Chris',
+            posts: [
+                {'title': 'brandon sucks'},
+                {'title': 'ask her out'}
+            ]
+        });
+        var validationResults = chris.validateSync();
+        if (!validationResults) {
+            chris.set('name', 'Still Chris');
+            chris.save()
+            .then(() => User.findOne({name: 'Still Chris'}))
+            .then((user) => {
+                user.posts.push({title:'title3'});
+                // chris.save();
+                return user.save();                
+            })
+            .then(() => User.findOne({name: 'Still Chris'}))
+            .then((user) => {
+                user.posts[0].remove();
+                return user.save();
+                // Remove the first post and then save and then assert length 2; 
+            })
+            .then(() => User.findOne({name: 'Still Chris'}))
+            .then((user) => {
+                assert(user.posts.length == 2);
+                done();
+            });
+        } else {
+            console.log("ERROR: ", validationResults.errors.name.message);
+            done();
+        }
+    });
 });

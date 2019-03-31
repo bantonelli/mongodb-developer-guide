@@ -8,7 +8,7 @@ EMBEDDING RESOURCES IN MODELS
 HOW SHOULD WE ADD IN POSTS?: 
 - Option 1 - Add another mongoose model 
     - This strategy makes a lot of sense in a SQL 
-      database, but not so much in Mongo 
+      database, but not so much in Mongo (at times)
 - Option 2 - Embed a Post object array inside of the 
   User model. 
     - This approach works especially well since there 
@@ -36,6 +36,15 @@ NESTING POSTS ON USERS
         EXAMPLE: posts: [PostSchema]
     - Add validation
         - You can even add validation to these type of fields. 
+
+        posts: {
+            type: [PostSchema],
+            validate: {
+                validator: function (post) {
+                    ...
+                }
+            }            
+        }
 
 SUBDOCUMENTS: (In Mongo)
 - The idea of embedding a resource inside of another 
@@ -103,7 +112,7 @@ PROBLEM: How do we remove an already existing post?
 7) Make assertion 
 
 **** ASIDE **** 
-- calling .remove() on a subdocument doesn't automatically save the  record back to the database. 
+- calling .remove() on a subdocument doesn't automatically save the record back to the database. 
     - this is unlike .remove() on a normal record 
     - It also doesn't return a promise so it won't continue the promise chain. 
 
