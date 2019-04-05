@@ -21,7 +21,7 @@ describe('Associations', () => {
         });
     });
 
-    it.only('saves a relation between a user and a blog post', (done) => {
+    it('saves a relation between a user and a blog post', (done) => {
         User.findOne({ name: 'Joe'})
         .populate('blogPosts')
         .then((user) => {
@@ -31,7 +31,7 @@ describe('Associations', () => {
         });
     });
 
-    it.only('saves a full relation tree', (done) => {
+    it('saves a full relation tree', (done) => {
         User.findOne({ name: 'Joe' })
         .populate({
             path: 'blogPosts',

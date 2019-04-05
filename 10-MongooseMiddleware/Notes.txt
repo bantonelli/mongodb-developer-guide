@@ -1,22 +1,77 @@
 ------------------------  
 CLEANING UP WITH MIDDLEWARE  
 ------------------------  
+- PROBLEM: We want to automatically clean up related records 
+  when a record is deleted from the database. 
+    - This problem is common to ALL database software. 
+    - Resource cleanup is very necessary for many types of  
+      Models. Especially if that type of resource is being 
+      deleted all the time. 
 
+- SOLUTION: Use middleware 
+    - Usually middleware are functions that execute before/after 
+      some distinct event. 
+        - pre middleware runs before the event 
+        - post middleware runs after the event 
+    - You can run pre/post middleware on several events supplied 
+      by mongoose including: 'init', 'save', 'validate', 'remove', etc. 
+        - we are going to use the 'remove' event as a trigger  
+          for our cleanup function. 
+    
 
 
 ------------------------  
 DEALING WITH CYCLIC REQUIRES 
 ------------------------  
+- Lets add middleware to run before the 'remove' event 
+UserSchema.pre('remove', function () {
+    // Need anon function instead of arrow function 
+    // This allows us to have access to the instance via 'this'
+})
 
+**** ASIDE **** 
+- Situations like this typically end up with a cyclic require 
+- Instead of relying on require, rely on mongoose 
+    - We can pull models right out of mongoose if its already been 
+      registered. 
+    EXAMPLE: const BlogPost = mongoose.model('blogPost');
 
 
 ------------------------  
 PRE-REMOVE MIDDLEWARE 
 ------------------------ 
+PROBLEM: 
+- Keep in mind that at this point user.blogPosts is an array 
+  of ObjectIDs.
+    - This creates a challenge because we don't have the record 
+      available directly to call blogPost.remove();
+***** WARNING ***** 
+- DO NOT iterate over the array of IDs to call remove on them. 
+- Basically: "iterate and perform a DB operation on every record" == BAD
+    - In these situations you should use an operator --> PERIOD 
 
+SOLUTION: 
+- Use a query operator called "$in" 
+- The next() function is used similar to mocha's done() 
+    - It lets mongoose know when to move onto the 'next' middleware.
+
+EXAMPLE: 
+    UserSchema.pre('remove', function (next) {
+        // The operator will look at each blogpost record 
+        // check if the id is "in" the users array of blogPosts 
+        // and remove it 'only if' this condition is true. 
+        BlogPost.remove({ _id: { $in: this.blogPosts } })
+        .then(() => {
+            next();
+        });
+    });
 
 
 ------------------------  
 TESTING PRE-REMOVE MIDDLEWARE 
------------------------- 
+------------------------
 
+***** ASIDE ***** 
+<Model>.count():
+    - This is a database operation that counts the amount of 
+      records in the Model's collection 
