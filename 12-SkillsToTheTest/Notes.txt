@@ -1,77 +1,115 @@
 ------------------------  
 PROJECT SETUP 
 ------------------------  
-
+- Clone UpStarMusic repo from github.com/stephengrider
+- install dependencies 
 
 
 ------------------------  
 PROJECT OVERVIEW 
 ------------------------  
+- npm run start    
+    - Pops up an application 
 
+- The UI for the app is already complete 
+    - But things are missing functionality wise
+- Code that we have to write is going to be 
+  the in database/queries directory. 
+
+- The first query that we will be doing is the 
+  FindArtist query.
+- The application is meant to sort through a big list 
+  of artists/musicians 
+    - So main functionality is around browsing through
+      the collection of artists in our database. 
 
 
 ------------------------  
 FIRST STEP - ARTIST AND ALBUM MODELS 
 ------------------------ 
+- GOAL: Put together the Artist and Album models 
 
+- ASSIGNMENT: Create a new mongoose model that 
+  satisfies the mongoose schema in RoboMongo. 
 
+- The view layer expects properties to be 
+  named precisely. 
 
 ------------------------  
 THE ALBUM SCHEMA 
 ------------------------ 
-
+- Did this correctly (see project code)
 
 
 ------------------------  
 THE ARTIST MODEL 
 ------------------------ 
-
+- Did this correctly (see project code)
 
 
 ------------------------  
 FINDING PARTICULAR RECORDS 
 ------------------------
-
+- The purpose of these query files
+    - Take in some arguments 
+    - Manipulate database in some way 
+    - Return a Promise that resolves with 
+      some amount of data. 
 
 
 
 ------------------------  
 FindOne VS FindById
 ------------------------
-
+- Basically use FindById as a shortcut 
+  for Model.findOne({ _id: id });
+- It is almost equivalent 
 
 
 ------------------------  
 THE CreateArtist OPERATION 
 ------------------------
-
+- GOAL: 
+    - take data from form (artistProps)
+    - then use this data to create a new artist record 
+    - then return the promise from .save(); 
 
 
 ------------------------  
 SOLUTION TO CREATING ARTISTS 
 ------------------------
-
+- Did this correctly (see project code)
 
 
 ------------------------  
 DELETING SINGULAR RECORDS 
 ------------------------
-
+- GOAL: 
+    - take given id
+    - then use this data to remove corresponding record 
+    - then return the promise; 
 
 
 ------------------------  
 SOLUTION TO REMOVING 
 ------------------------
-
+- Did this correctly (see project code)
 
 
 
 ------------------------  
 EDITING RECORDS  
 ------------------------
-
+- GOAL: 
+    - take data from form (artistProps)
+    - then use this data to update artist record 
+    - then return the promise from .save(); 
 
 
 ------------------------  
 HOW TO EDIT SINGLE ARTISTS 
 ------------------------
+- Did this correctly (see project code)
+**** IMPORTANT NOTE: 
+- Always try to get things done in less steps.
+    - If possible, don't use a 2 step approach.
