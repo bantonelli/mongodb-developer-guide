@@ -1,16 +1,39 @@
 ------------------------  
 SKIP AND LIMIT
 ------------------------  
+- PROBLEM: We want to show a small amount of a set of records. 
+
+- SKIP and LIMIT are 2 query modifiers that we can use to implement
+  pagination of a huge set of records. 
+
+- SKIP: The number of records you want to skip returning on a query
+- LIMIT: The maximum number of records you want to return from query 
+
+- By default we start of with a skip value of 0.
+    - We can gradually increment this value for each subsequent query.
 
 
 
 ------------------------  
 WRITING SKIP AND LIMIT QUERIES 
 ------------------------  
-
+- Query.skip(<NumberToSkip>).limit(<NumberToLimit>)
 
 
 ------------------------  
 SORTING COLLECTIONS 
 ------------------------ 
+EXAMPLE: Sort by name ascending
+Query.sort({
+    name: 1
+})
+.skip(<NumberToSkip>)
+.limit(<NumberToLimit>)
 
+
+EXAMPLE: Sort by name descending
+Query.sort({
+    name: -1
+})
+.skip(<NumberToSkip>)
+.limit(<NumberToLimit>)
