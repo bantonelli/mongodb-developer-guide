@@ -90,22 +90,115 @@ EXAMPLE:
 ------------------------  
 WIRING UP "HAS MANY" AND "HAS ONE" RELATIONSHIPS 
 ------------------------
-- 
+- Basically if you have a related property or an 
+  association on a Schema, you can add new relationship 
+  by just pushing the instance onto the array. 
+    - Just like adding a new subdocument 
 
+EXAMPLE: Has Many relation
+    joe.blogPosts.push(blogPost);
+    blogPost.comments.push(comment);
+
+EXAMPLE: Has One relation 
+    // This is mongoose magic at work (some kind of setter)
+    // The setter sets the ObjectID of joe to be the user property
+    comment.user = joe;
 
 
 ------------------------  
 Promise.All FOR PARALLEL OPERATIONS 
 ------------------------
+- PROBLEM: When you have multiple promise based database operations, 
+  you don't know which one will finish first. 
+    - Therefore you don't know which .then() call will be the final 
+      one, and hence you don't know when the whole process gets finished.
 
+- SOLUTION: Promise.all 
+    - This is a function that takes an array of Promises and 
+      combines them into a single Promise resolve. 
+    - This process has all of the promises run in Parallel so the 
+      overall runtime should be as long as the longest promise. 
+    EXAMPLE: 
+        Promise.all([joe.save(), blogPost.save(), comment.save()])
+        .then(() => {
+            ...
+            done();
+        });
+
+**** ASIDE **** 
+- To specify mocha to only run one 'it' block use it.only()
 
 
 ------------------------  
 POPULATING QUERIES 
 ------------------------
+- PROBLEM: We want to have the related objects show up 
+  inside of the document that is fetched. 
 
+- EXAMINING MONGO QUERIES: 
+    - Queries themselves don't go off to the database 
+    - .then() is what executes the query on the database 
+    **** ASIDE **** 
+    - It used to be that you had to call .exec() after a query 
+    EXAMPLE: User.findOne({}).exec();
+        - Basically .then() is taking the place of .exec() 
+        - This is because we are using a Promise based system 
+    
+    EXAMPLE: User.findOne().then();
+        - User --> Get user Collection 
+        - .findOne() --> this returns a MongoDB query.
+        - .then() --> Execute the query handling the result 
+          with a promise.  
+    
+QUERY MODIFIERS:
+- In mongoose we are able to add on modifiers to any query. 
+- Modifiers are used to customize the query that we are making. 
+
+EXAMPLE (THE POPULATE MODIFIER): populate(<nameOfModelProperty>)
+    User.findOne({ name: 'Joe' }).populate('blogPosts').then()
+    - This means: Set up a query in the User collection for the 
+      first record with the name of 'Joe'. 
+    - Populate the related blogPosts and then() executed the query
+      on the database.
+
+- NOTES ON POPULATE: 
+    - the parameter must match the property name EXACTLY as defined
+      on the Schema 
+    - It will not automatically populate nested relations 
+        - Mongoose does not provide a way to go through and 
+          recursively load up the associations 
+        - However, we can EXPLICITLY populate what we need 
+          exactly. 
+    
 
 
 ------------------------  
 LOADING DEEPLY NESTED ASSOCIATIONS 
 ------------------------
+- PROBLEM: How are we going to load nested associations
+    - Populate might fall short in some cases especially 
+      if we want to load up a large number of associations 
+    - If you load up too much it'll bog down the duration of 
+      the DB queries. 
+
+- POPULATE WITH CONFIG PARAMETER: 
+    - Instead of a string you can pass .populate a config object 
+    EXAMPLE: 
+        var config = {
+            path: 'blogPosts',
+            populate: {
+                path: 'comments'
+            }
+        }
+        ...
+        .populate(config);
+    EXPLANATION:     
+    config.path: 
+        - This property is similar to the string parameter 
+        - Its basically the name of the property you wish to populate
+    
+    config.populate: 
+        - Inside of the path find an another additional association
+        - Its basically a way to create a populate tree specifying 
+          which nested properties SHOULD get populated.
+
