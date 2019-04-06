@@ -1,31 +1,82 @@
 ------------------------  
 MINIMUM AND MAXIMUM VALUES IN A COLLECTION 
 ------------------------  
+- GOAL: be able to set a minimum and maximum 
+  range for the "years active" slider in the app. 
+    - The slider should only be able to select values 
+      that actually exist in the database. 
+    - For example, if the lowest years active of ANY artist 
+      is 3 years then the slider should start with a minimum possible 
+      value of 3 years. 
 
 
 
 ------------------------  
 SOLUTION TO MIN AND MAX QUERIES 
-------------------------  
+------------------------
+- APPROACH: 
+    - Sort (ascending) and then limit to 1 
+        - This will be the minimum 
+    - Sort (descending) and then limit to 1 
+        - This will be the maximum 
 
+***** ASIDE ***** 
+- Promise.all() 
+    - Must have some sort of construct to handle both RESOLVED 
+        AND Unresolved Promises. 
+    - If you pass Promise.all() resolved promises. Promise.all 
+        will resolve with the values of each resolved Promise in the 
+        same order as they appear lexically. 
+    - If you pass unresolved promises then you can resolve them with a single 
+        .then();
+ 
 
 
 ------------------------  
 CHALLENGE MODE - SEARCH QUERY  
 ------------------------ 
+- The purpose of the Search Query is to populate the 
+  main window of the application (the one where the sliders are).
 
+- POSSIBLE SEARCH CRITERIA: Name, Age, Years Active 
+    - We have to be able to choose which of these to SortBy
+    - This will require us to pass a dynamic key to the 
+      .sort() query modifier. 
+
+- GOAL: For the first step of this.
+    - Write a query that will follow sortProperty, offset, limit 
+      options only
+    - Do no worry about 'criteria' object yet. 
+    - Return object structure: 
+        {all: [artists], count: count, offset: offset, limit: limit};
 
 
 ------------------------  
 SORTING, LIMITING, AND SKIPPING TOGETHER 
 ------------------------ 
+- Got most of the solution correct (See the project code --> SearchArtists.js) 
 
+***** ASIDE: UI NOTES ***** 
+- Grey artists --> Retired artist 
+- Green Play button --> brings to artist detail page 
+- Pagination will automatically render when solution done correctly
 
 
 ------------------------  
 DANGER! BIG CHALLENGE AHEAD 
 ------------------------ 
+- GOAL: 
+    - Get Name search and sliders to work with search criteria
+    - As you input values on the front end a criteria object will 
+      be built. 
+    - Use the criteria object to compile the information needed to 
+      perform the main query. 
+    - Solution will NOT be to pass the criteria object along to the 
+      DB query. 
 
+- TIPS: 
+    - Use MongoDB operators 
+    - Selectors to Examine: $gt, $lt, $text, etc   
 
 
 ------------------------  
