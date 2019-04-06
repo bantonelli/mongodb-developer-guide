@@ -1,94 +1,246 @@
 ------------------------  
-CLEANING UP WITH MIDDLEWARE  
+APP OVERVIEW 
 ------------------------  
-
+- We are going to build an API on a Node Server 
+- It'll be suitable for most front-ends 
+- Our API will be similar to an app like "Uber" 
+    - The different routes that we are going to be putting 
+      together are going to be based on the drivers that we
+      have available. 
 
 
 ------------------------  
-DEALING WITH CYCLIC REQUIRES 
+DESIGNING API ROUTES
 ------------------------  
-
+- DRIVERS COLLECTION: Ways to modify this collection? 
+    - Create a Driver: POST /api/drivers
+        - People can register as a new driver
+    - Delete a Driver: DELETE /api/drivers/id
+        - We can delete bad drivers 
+        - Drivers can quit 
+    - Edit a Driver: PUT /api/drivers/id
+        - Setting a driver as active or inactive 
+        - Change the driver's car 
+    - Find Drivers near me: GET /api/drivers 
+        - We only want to find drivers who are in 
+          a certain radius of the current location 
+        - MongoDB has fantastic support for geo-based queries 
+            - This is relatively straightforward 
 
 
 ------------------------  
-PRE-REMOVE MIDDLEWARE 
+PROJECT SETUP 
 ------------------------ 
-- In our app we are going to have both Posts AND BlogPosts
-    - posts --> Points to PostSchema 
-    - BlogPosts --> Separate collection of Posts 
-
-
-
-------------------------  
-TESTING PRE-REMOVE MIDDLEWARE 
------------------------- 
-HOW DO WE REFERENCE ONE TYPE OF MODEL TO ANOTHER?
-
-1) Setup a reference to another collection on a Schema 
-    - Use array to specify a 'to many' relationship  
-    - Put the configuration object inside of the array 
-2) Config object EXAMPLE: {type: Schema.Types.ObjectID, ref: "Comment"}
-    - Type --> allows you to specify a reference to a 
-      record in another collection
-        - This example uses the ObjectID as a reference 
-    - Ref --> Specify which collection we are referencing to. 
-        - You have to use the same string used when creating the 
-          reference model. 
-        - For instance, if you registered a User model as 'author'
-            - You have to use 'author' in the config object if you 
-              want to reference that collection.
-        **** ASIDE **** 
-            - Mongoose normalizes collection/model names to be ALL LOWERCASE. 
-            - So even if you do: 
-                mongoose.model('Author', AuthorSchema);
-                - The model will still be accessible through the connection 
-                  as 'author'. 
-
-3) Set up a corresponding reference on the alternate model Schema. 
-    - Do the same thing but on the reference model Schema. 
-
+- Basically he covered the basics of HTTP requests 
+- Covered the main HTTP request anatomy:
+    - Body 
+    - Headers 
+    - Method 
 
 
 ------------------------  
-TEST SETUP FOR ASSOCIATIONS 
+HTTP REQUEST METHODS 
 ------------------------ 
-- Make sure to drop other collections in the before() hook as well 
-- However by dropping each collection sequentially the code to 
-  do this is acheived easily via nesting callbacks (callback hell).
-    - This is a less-than-ideal solution, but is needed because you aren't able 
-      to drop multiple collections at the same time (in Mongo).
+- The request method SHOULD be tied to what you expect 
+  the functionality to be at the endpoint. 
+    - This isn't hard and fast rule but a general 
+      approach to designing web services. 
 
-EXAMPLE: 
-    users.drop(() => {
-        comments.drop(() => {
-            blogPosts.drop(() => {
-                // ready to run the next test.
-                done();
-            });
-        }); 
+- The Node server will examine each request sent by 
+  the browser and respond accordingly (depending on the 
+  request method).
+
+
+------------------------  
+THE BASICS OF EXPRESS 
+------------------------ 
+- NODE: 
+    - Environment for JS to run 
+
+- EXPRESS: 
+    - Server library to handle common operations on HTTP 
+      requests and responses. 
+
+
+------------------------  
+EXPRESS BOILERPLATE 
+------------------------
+- TO CREATE A DRIVER: 
+    - POST to /api/drivers 
+    - Router --> Pushes to Controller 
+        - Controller --> Accesses Model 
+        - Controller --> Returns Data to API server 
+        - API Server --> Responds to request. 
+
+
+------------------------  
+HANDLING REQUESTS WITH EXPRESS 
+------------------------
+- Covered the basics of express route handling 
+***** KNOW THIS ALREADY ****
+
+
+------------------------  
+TESTING EXPRESS APPS WITH MOCHA 
+------------------------
+- We are going to install a package called 'supertest' 
+
+- SUPERTEST PACKAGE: 
+    - Helps generate requests for us to test our endpoints 
+    - By convention we require supertest in as 'require' NOT 
+      SUPERTEST. 
+
+- BASIC SUPERTEST USAGE: 
+    it('Handles a GET request to /api', function (done) {
+        request(app)
+        .get('/api')
+        .end((err, response) => {
+            assert(response.body.hi === 'there');
+            done();        
+        });
     });
-
+    - ERR: 
+        - Did anything physically go wrong with the 
+          request. 
+    - RESPONSE: 
+        - This is the important thing 
+        - Its the response generated by our app's endpoint. 
+        - The most important properties: 
+            // The information returned from the server
+            response.body 
+            // Status of the request (404, 400, etc)
+            response.status 
 
 
 ------------------------  
-WIRING UP "HAS MANY" AND "HAS ONE" RELATIONSHIPS 
+RUNNING MOCHA 
 ------------------------
-- 
-
+// in package.json
+- "test": "nodemon --exec 'mocha --recursive -R'"
 
 
 ------------------------  
-Promise.All FOR PARALLEL OPERATIONS 
+PROJECT STRUCTURE 
 ------------------------
-
+- /router.js 
+    - Job is to look at incoming request 
+    - Send that request off to the appropriate route handler 
+    - Really express comes with a prepackaged router 
+        - app.get --> router 
+- /controller.js 
+    - Contains all the logic that determines how 
+      to handle the request. 
+    - Basically this is the callback function supplied 
+      to the express router. 
+- /model.js 
+    - This is the mongoose Models 
 
 
 ------------------------  
-POPULATING QUERIES 
+REFACTORING FOR CONTROLLERS AND MODELS 
 ------------------------
+- ROUTER:
+    - Put this in a routes/ folder 
+    - Main router is simply a function-based export 
+        - This function takes in the 'app' as the main 
+          parameter.
+        - Set up the app.get, app.post, etc. handlers 
+        - Use Controller functions as callbacks for the 
+          handlers defined.     
+
+- CONTROLLERS: 
+    - Set up controllers as object exports 
+        - EXAMPLE: 
+            DriverController = {
+                greeting: function (req, res) {
+                    res.send("Hi There"); 
+                }
+            };
+
+
+------------------------  
+THE DRIVER MODEL 
+------------------------
+- MODELS: 
+    - Set up /models directory to put the model files. 
+    - Use mongoose to define Schema and Model 
+      in the same file. 
+
+- At this stage we should be thinking about what properties 
+  should be included on the Schema 
+    - Think of the types and the names of the properties. 
+    - Do the basics 
+        - Anything that isn't clear in terms of implementation
+          should be put off. 
+
+***** EXPORT STYLE ***** 
+const Driver = mongoose.model('driver', DriverSchema);
+module.exports = Driver; 
 
 
 
 ------------------------  
-LOADING DEEPLY NESTED ASSOCIATIONS 
+THE CREATE DRIVERS ROUTE 
+------------------------
+- We want the people signing up for our application 
+  to become drivers 
+    - When we do this it should be a POST request. 
+
+
+
+------------------------  
+THE BODYPARSER MIDDLEWARE  
+------------------------
+- In our case we might have a request body that 
+  has an email property. 
+- Why is request.body special? 
+    - When a new request is issued:
+        1) Connection/Handshake with server 
+        2) Send chunks of data 
+            - chunk a 
+            - chunk b 
+            - etc 
+        3) Done! Call the route handler 
+    - While the chunks are send Express doesn't parse 
+      the information, it just receives it 
+        - Therefore we need a 3rd party package (middleware)
+          to parse it into JS objects. 
+
+- BODYPARSER: middleware package to parse requests 
+    - This used to be a default package included with 
+      Express package. (it was split after)
+    - The package allows you to handle Various data formats sent 
+      in the body of the POST requests. 
+        - In our case we are using JSON parser.
+    - Runs as middleware. 
+    - It also puts the request body onto the req.body 
+      property automatically. 
+
+EXAMPLE USAGE: app.js file 
+    // MUST PLACE MIDDLEWARE BEFORE routes() call 
+    // Calling this will assume request body data is JSON 
+    app.use(bodyParser.json());
+
+
+------------------------  
+TESTING DRIVER CREATION   
+------------------------
+- PROCESS HINTS:
+    - Set up test suite for controller first 
+    - Use '<method> <route> <result>' layout for 'it' statements
+    EXAMPLE: 'POST to /api/drivers creates a new driver'
+
+- request.send(): 
+    - Used to customize the request being sent to the server. 
+    - You can send a request body by using this method. 
+
+- request.end(<handlerFunction>)
+    - HANDLER FUNCTION: 
+        - Handles the response sent back from server 
+        - Called after the request is finished being 
+          handled on the server.
+
+
+------------------------  
+MORE ON TESTING DRIVER CREATION   
 ------------------------
