@@ -248,6 +248,11 @@ TESTING DRIVER CREATION
         - Called after the request is finished being 
           handled on the server.
 
+- If you have .then() chained onto the request (AKA if you're 
+  using Promises) --> DO NOT USE .end() 
+    - Just use .then() in place of it. 
+    - Use .catch to handle errors. 
+
 
 ------------------------  
 MORE ON TESTING DRIVER CREATION   
