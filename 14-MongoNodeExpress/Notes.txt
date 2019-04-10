@@ -50,6 +50,12 @@ HTTP REQUEST METHODS
   the browser and respond accordingly (depending on the 
   request method).
 
+GENERAL CONVENTIONS FOR CRUD APP: 
+    Creating Records --> POST 
+    Reading Records --> GET  
+    Updating Records --> PUT 
+    Deleting Records --> DELETE 
+
 
 ------------------------  
 THE BASICS OF EXPRESS 
@@ -99,6 +105,8 @@ TESTING EXPRESS APPS WITH MOCHA
             done();        
         });
     });
+    - You can call intermediary methods in between the request method 
+      (.get, .post, etc) and .end(). 
     - ERR: 
         - Did anything physically go wrong with the 
           request. 
