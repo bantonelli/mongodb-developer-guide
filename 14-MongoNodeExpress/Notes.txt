@@ -50,6 +50,12 @@ HTTP REQUEST METHODS
   the browser and respond accordingly (depending on the 
   request method).
 
+GENERAL CONVENTIONS FOR CRUD APP: 
+    Creating Records --> POST 
+    Reading Records --> GET  
+    Updating Records --> PUT 
+    Deleting Records --> DELETE 
+
 
 ------------------------  
 THE BASICS OF EXPRESS 
@@ -99,6 +105,8 @@ TESTING EXPRESS APPS WITH MOCHA
             done();        
         });
     });
+    - You can call intermediary methods in between the request method 
+      (.get, .post, etc) and .end(). 
     - ERR: 
         - Did anything physically go wrong with the 
           request. 
@@ -239,6 +247,11 @@ TESTING DRIVER CREATION
         - Handles the response sent back from server 
         - Called after the request is finished being 
           handled on the server.
+
+- If you have .then() chained onto the request (AKA if you're 
+  using Promises) --> DO NOT USE .end() 
+    - Just use .then() in place of it. 
+    - Use .catch to handle errors. 
 
 
 ------------------------  
