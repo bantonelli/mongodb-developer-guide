@@ -6,5 +6,5 @@ module.exports = (app) => {
     app.get('/api', DriversController.greeting);
     
     // Create a new driver
-    app.post('api/drivers', DriversController.create);
+    app.post('/api/drivers', DriversController.create);
 };

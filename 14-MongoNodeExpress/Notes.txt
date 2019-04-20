@@ -244,3 +244,46 @@ TESTING DRIVER CREATION
 ------------------------  
 MORE ON TESTING DRIVER CREATION   
 ------------------------
+- PROBLEM: How can we make assertions on requests? 
+    1) Look at the response and make assertion 
+       on response result. 
+    2) Look inside drivers collection and assert 
+       that the user with the email exists in the collection 
+       (now that they have created an account)
+    3) Look at the number of drivers in collection (before 
+       request is made). Then take another count that asserts 
+       that one more driver is added to the collection. 
+
+***** ASIDE: IMPORTING MODELS *****
+- THE TEST SUITES SHOULD USE mongoose.model(<modelName>)
+  to import the model (don't create cyclic requires).
+
+
+------------------------  
+ADDITIONAL MONGOOSE SETUP    
+------------------------
+***** GOTCHA *****
+- You have to remember to require in Models at some point 
+  in the application for the test suite to rely on registered 
+  mongoose models. 
+
+- BASIC PROJECT SETUP: 
+    1) Remember to connect mongoose to the database 
+        - Call mongoose.connect() inside of app.js 
+        - The call should come after the express server 
+          is instantiated (after app is defined).
+    2) Remember to drop collections before each mocha test 
+        - This should be put in the mocha 'test_helper' file 
+    3) Register a Promise library to mongoose.
+
+***** BIG GOTCHA: SUPERTEST ****** 
+- When using supertest DON'T use request.end() IF 
+  you're using promises in mongoose lookups (deprecated).
+    - It creates a double-request bug if you're using .then 
+      following .end().
+- SOLUTION: 
+    - Use .then(): 
+        - Instead of 2 parameters the only parameter passed 
+          is the response (no errors).
+            - SUPERTEST API ONLY RESOLVES WITH ONE ARG
+        - Use .catch() to handle errors instead. 
